@@ -13,23 +13,23 @@ import java.net.URL;
 
 import android.util.Log;
 
-public class HttpDownloader {
-	private URL url = null;
-	private static final String TAG = "HttpDownloader";
+public class HttpConnection {
+	public URL url = null;
+	public static String BaseURL="192.168.1.107";
+	private static final String TAG = "HttpHttpConnection";
 
 	/**
-	 * 根据URL下载文件，前提是这个文件当中的内容是文本，函数的返回值就是文件当中的内容 1.创建一个URL对象
+	 * get请求此URL，函数的返回值就是结果成功与否 1.创建一个URL对象
 	 * 2.通过URL对象，创建一个HttpURLConnection对象 3.得到InputStram 4.从InputStream当中读取数据
 	 * 
 	 * @param urlStr
 	 * @return
 	 */
-	public String download(String urlStr) {
+	public String getURL(String urlStr) {
 		HttpURLConnection urlConn = null;
 		StringBuffer sb = new StringBuffer();
 		String line = null;
 		BufferedReader buffer = null;
-		String payload = null;
 		try {
 			// 创建一个URL对象
 			url = new URL(urlStr);
@@ -38,14 +38,9 @@ public class HttpDownloader {
 			urlConn.setConnectTimeout(3000);
 			urlConn.setReadTimeout(5000);
 			// 使用IO流读取数据
-			/*
-			 * buffer = new BufferedReader(new InputStreamReader(urlConn
-			 * .getInputStream(),"GBK"));
-			 */
 			int length = urlConn.getInputStream().available();
 			buffer = new BufferedReader(new InputStreamReader(
 					urlConn.getInputStream(), "UTF-8"));
-			// .getInputStream(),"GBK"));
 			while ((line = buffer.readLine()) != null) {
 				sb.append(line);
 			}
@@ -63,7 +58,7 @@ public class HttpDownloader {
 		return sb.toString();
 	}
 
-	public String postform(String urlStr, String payload) {
+	public String postURL(String urlStr, String payload) {
 		HttpURLConnection urlConn = null;
 		StringBuffer sb = new StringBuffer();
 		String line = null;
@@ -82,13 +77,8 @@ public class HttpDownloader {
 			out.flush();
 			out.close();
 			// 使用IO流读取数据
-			/*
-			 * buffer = new BufferedReader(new InputStreamReader(urlConn
-			 * .getInputStream(),"GBK"));
-			 */
 			buffer = new BufferedReader(new InputStreamReader(
 					urlConn.getInputStream(), "UTF-8"));
-			// .getInputStream(),"GBK"));
 			while ((line = buffer.readLine()) != null) {
 				sb.append(line);
 			}
