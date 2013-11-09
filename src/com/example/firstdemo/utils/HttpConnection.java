@@ -15,7 +15,7 @@ import android.util.Log;
 
 public class HttpConnection {
 	public URL url = null;
-	public static String BaseURL="192.168.1.107";
+	public static String BaseURL="http://115.29.175.60:8080";
 	private static final String TAG = "HttpHttpConnection";
 
 	/**
@@ -30,6 +30,7 @@ public class HttpConnection {
 		StringBuffer sb = new StringBuffer();
 		String line = null;
 		BufferedReader buffer = null;
+		Log.e(TAG,"start getURL++++++++++ url is "+urlStr);
 		try {
 			// 创建一个URL对象
 			url = new URL(urlStr);
@@ -46,15 +47,17 @@ public class HttpConnection {
 			}
 
 		} catch (Exception e) {
-			Log.e(TAG, "未收到数据," + sb.toString());
+		    e.printStackTrace();
+			Log.e(TAG, "no data," + sb.toString());
 		} finally {
 			try {
 				urlConn.disconnect();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			Log.e(TAG, "数据：" + sb.toString());
+			Log.e(TAG, "data：" + sb.toString());
 		}
+		Log.e(TAG,"end getURL++++++++++ ret is "+sb.toString());
 		return sb.toString();
 	}
 
@@ -82,9 +85,9 @@ public class HttpConnection {
 			while ((line = buffer.readLine()) != null) {
 				sb.append(line);
 			}
-			Log.e(TAG, "反馈收到" + sb.toString());
+			Log.e(TAG, "ret " + sb.toString());
 		} catch (Exception e) {
-			Log.e(TAG, "反馈收到catch" + sb.toString());
+			Log.e(TAG, "ret catch" + sb.toString());
 		} finally {
 
 			try {
@@ -92,7 +95,7 @@ public class HttpConnection {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			Log.e(TAG, "反馈收到finally" + sb.toString());
+			Log.e(TAG, "ret finally" + sb.toString());
 		}
 		return sb.toString();
 	}

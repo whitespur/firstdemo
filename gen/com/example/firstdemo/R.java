@@ -53,11 +53,21 @@ public final class R {
     }
     public static final class string {
         public static final int action_settings=0x7f050001;
+        public static final int age=0x7f050006;
         public static final int app_name=0x7f050000;
+        public static final int female=0x7f050009;
         public static final int hello_world=0x7f050002;
-        public static final int order=0x7f050005;
-        public static final int place=0x7f050004;
-        public static final int time=0x7f050003;
+        public static final int hint_age=0x7f05000c;
+        public static final int hint_password=0x7f05000b;
+        public static final int hint_username=0x7f05000a;
+        public static final int male=0x7f050008;
+        public static final int order=0x7f05000f;
+        public static final int password=0x7f050005;
+        public static final int place=0x7f05000e;
+        public static final int sex=0x7f050007;
+        public static final int time=0x7f05000d;
+        public static final int username=0x7f050004;
+        public static final int welcome_register=0x7f050003;
     }
     public static final class style {
         /** 

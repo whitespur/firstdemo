@@ -1,17 +1,25 @@
 package com.example.firstdemo.data;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.example.firstdemo.data.UserDatabaseHelper.UserColumns;
 import com.example.firstdemo.utils.HttpConnection;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.CursorJoiner.Result;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
 
 public class UserService {
 	private UserDatabaseHelper dbHelper;
 	private static final String TAG="UserService";
+	private String urlString;
+	private String retString;
+	private int code=0;
 	public UserService(Context context){
 		dbHelper=new UserDatabaseHelper(context);
 	}
@@ -22,19 +30,42 @@ public class UserService {
 		Cursor cursor=sdb.rawQuery(sql, new String[]{username,password});		
 		if(cursor.moveToFirst()==true){
 			cursor.close();
+			sdb.close();
 			return true;
 		}
 		return false;
 	}
 	public boolean register(User user){
+	    boolean ret=false;
 		SQLiteDatabase sdb=dbHelper.getWritableDatabase();
 		String sql="insert into user(username,password,age,sex) values(?,?,?,?)";
 		Object obj[]={user.getUsername(),user.getPassword(),user.getAge(),user.getSex()};
 		sdb.execSQL(sql, obj);	
-		//TODO: register info to server 
-		HttpConnection mHttpConnection = new HttpConnection();
-		mHttpConnection.getURL(HttpConnection.BaseURL+"?register?username="+user.getUsername()+"&password="+user.getPassword());
-		return true;
+		sdb.close();
+		//TODO: register info to server need in a thread user handler to get result
+		
+		urlString=HttpConnection.BaseURL+"/init?username="+user.getUsername()+"&passwd="+user.getPassword()
+                +"&age="+user.getAge()+"&sex="+user.getSex();
+		Log.d(TAG,"register url is "+urlString);
+		new Thread(){
+            public void run(){
+                HttpConnection mHttpConnection = new HttpConnection();
+                retString=mHttpConnection.getURL(urlString);
+                try {
+                    JSONObject result = new JSONObject(retString);
+                    code = result.getInt("code");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+		
+		Log.d(TAG,"register retString is "+retString+" code is "+code);
+		if(code == 0){
+		    return true;
+		}else{
+		    return false;
+		}
 	}
 	//insert same as register
 	public void insert(User user){
@@ -71,5 +102,6 @@ public class UserService {
 		}
 		return retUser;
 	}
+	
 	
 }

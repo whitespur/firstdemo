@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
-        android:text="欢迎进入注册界面!"
+        android:text="@string/welcome_register"
         android:textSize="30dp"
         android:textStyle="bold" />
 
@@ -24,13 +24,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="用户名：" />
+                android:text="@string/username"/>"
 
             <EditText
                 android:id="@+id/usernameRegister"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:hint="请输入用户名！！！" />
+                android:hint="@string/hint_username"/>"
         </TableRow>
 
         <TableRow >
@@ -39,13 +39,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="密码：" />
+                android:text="@string/password"/>"
 
             <EditText
                 android:id="@+id/passwordRegister"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:hint="请输入密码！！！" />
+                android:hint="@string/hint_password"/>
         </TableRow>
 
         <TableRow >
@@ -54,13 +54,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="年龄：" />
+                android:text="@string/age"/>
 
             <EditText
                 android:id="@+id/ageRegister"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:hint="请输入年龄！！！" />
+                android:hint="@string/hint_age"/>
         </TableRow>
 
         <TableRow >
@@ -69,7 +69,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="性别："
+                android:text="@string/sex"
                 android:textSize="20dp" />
 
             <RadioGroup
@@ -81,11 +81,11 @@
 
                 <RadioButton
                     android:id="@+id/nan"
-                    android:text="男" />
+                    android:text="@string/male"/>
 
                 <RadioButton
                     android:id="@id/woman"
-                    android:text="女" />
+                    android:text="@string/female"/>
             </RadioGroup>
         </TableRow>
 
