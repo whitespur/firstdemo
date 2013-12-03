@@ -35,8 +35,7 @@ public class CheckNet {
                 }
             }
         } catch (Exception e) {
-            // TODO: handle exception
-            
+            e.printStackTrace();
         }
         return false;
     }

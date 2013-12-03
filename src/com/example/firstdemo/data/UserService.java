@@ -1,3 +1,4 @@
+
 package com.example.firstdemo.data;
 
 import org.json.JSONException;
@@ -15,42 +16,78 @@ import android.text.TextUtils;
 import android.util.Log;
 
 public class UserService {
-	private UserDatabaseHelper dbHelper;
-	private static final String TAG="UserService";
-	private String urlString;
-	private String retString;
-	private int code=0;
-	public UserService(Context context){
-		dbHelper=new UserDatabaseHelper(context);
-	}
-	
-	public boolean login(String username,String password){
-		SQLiteDatabase sdb=dbHelper.getReadableDatabase();
-		String sql="select * from user where username=? and password=?";
-		Cursor cursor=sdb.rawQuery(sql, new String[]{username,password});		
-		if(cursor.moveToFirst()==true){
-			cursor.close();
-			sdb.close();
-			return true;
-		}
-		return false;
-	}
-	public boolean register(User user){
-	    boolean ret=false;
-		SQLiteDatabase sdb=dbHelper.getWritableDatabase();
-		String sql="insert into user(username,password,age,sex) values(?,?,?,?)";
-		Object obj[]={user.getUsername(),user.getPassword(),user.getAge(),user.getSex()};
-		sdb.execSQL(sql, obj);	
-		sdb.close();
-		//TODO: register info to server need in a thread user handler to get result
-		
-		urlString=HttpConnection.BaseURL+"/init?username="+user.getUsername()+"&passwd="+user.getPassword()
-                +"&age="+user.getAge()+"&sex="+user.getSex();
-		Log.d(TAG,"register url is "+urlString);
-		new Thread(){
-            public void run(){
+    private UserDatabaseHelper dbHelper;
+    private static final String TAG = "UserService";
+    private String urlString;
+    private String retString;
+    private int code = 0;
+
+    public UserService(Context context) {
+        dbHelper = new UserDatabaseHelper(context);
+    }
+
+    public boolean login(String username, String password) {//need use handler get result from server
+        // query local database
+        /*
+         * SQLiteDatabase sdb=dbHelper.getReadableDatabase(); String
+         * sql="select * from user where username=? and password=?"; Cursor
+         * cursor=sdb.rawQuery(sql, new String[]{username,password});
+         * if(cursor.moveToFirst()==true){ cursor.close(); sdb.close(); return
+         * true; } return false;
+         */
+        SQLiteDatabase sdb = dbHelper.getWritableDatabase();
+        String sql = "insert into order(user_name) values(?)";
+        Object obj[] = {
+                username
+        };
+        sdb.execSQL(sql, obj);
+        sdb.close();
+        
+        code = 0;
+        if(!TextUtils.isEmpty(username)&&!TextUtils.isEmpty(password)){
+            urlString = HttpConnection.BaseURL + "/login?username="+username+"&passwd="+password;
+            Log.d(TAG,"login url is "+urlString);
+            new Thread() {
+                public void run() {
+                    HttpConnection mHttpConnection = new HttpConnection();
+                    retString = mHttpConnection.getURL(urlString);
+                    try {
+                        JSONObject result = new JSONObject(retString);
+                        code = result.getInt("code");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
+        }
+        Log.d(TAG,"login retString is " + retString + " code is " + code);
+        if(code == 0){
+            return true;
+        }else{
+            return false;
+        }
+
+    }
+
+    public boolean register(User user) {
+        boolean ret = false;
+        SQLiteDatabase sdb = dbHelper.getWritableDatabase();
+        String sql = "insert into user(username,password,age,sex) values(?,?,?,?)";
+        Object obj[] = {
+                user.getUsername(), user.getPassword(), user.getAge(), user.getSex()
+        };
+        sdb.execSQL(sql, obj);
+        sdb.close();
+        // TODO: register info to server need in a thread user handler to get
+        // result
+
+        urlString = HttpConnection.BaseURL + "/init?username=" + user.getUsername() + "&passwd=" + user.getPassword() + "&age=" + user.getAge() + "&sex="
+                + user.getSex();
+        Log.d(TAG, "register url is " + urlString);
+        new Thread() {
+            public void run() {
                 HttpConnection mHttpConnection = new HttpConnection();
-                retString=mHttpConnection.getURL(urlString);
+                retString = mHttpConnection.getURL(urlString);
                 try {
                     JSONObject result = new JSONObject(retString);
                     code = result.getInt("code");
@@ -59,49 +96,52 @@ public class UserService {
                 }
             }
         }.start();
-		
-		Log.d(TAG,"register retString is "+retString+" code is "+code);
-		if(code == 0){
-		    return true;
-		}else{
-		    return false;
-		}
-	}
-	//insert same as register
-	public void insert(User user){
-		
-	}
-	//delete
-	public void delete(String  username){
-		SQLiteDatabase sdb=dbHelper.getReadableDatabase();
-		String sql = "delete from user where username = '"+username+"'";
-		sdb.execSQL(sql);
-	}
-	//update
-	public void update(User user){
-		
-	}
-	public User query(String username){
-		User retUser=new User();
-		Cursor cursor;
-		SQLiteDatabase sdb=dbHelper.getReadableDatabase();
-		String sql ="select * from user where username = '"+username+"'";
-		cursor = sdb.rawQuery(sql,null);
-		if(cursor.moveToFirst() ){
-			if(!TextUtils.isEmpty(cursor.getString(0))){
-				Log.i(TAG,"pass is "+cursor.getString(2));
-				retUser.setUsername(cursor.getString(cursor.getColumnIndex(UserColumns.NAME)));
-				retUser.setPassword(cursor.getString(cursor.getColumnIndex(UserColumns.PASSWORD)));
-				retUser.setAge(cursor.getInt(cursor.getColumnIndex(UserColumns.AGE)));
-				retUser.setSex(cursor.getString(cursor.getColumnIndex(UserColumns.SEX)));
-			}
-			
-		}
-		if(!cursor.isClosed()){
-			cursor.close();
-		}
-		return retUser;
-	}
-	
-	
+
+        Log.d(TAG, "register retString is " + retString + " code is " + code);
+        if (code == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    // insert same as register
+    public void insert(User user) {
+
+    }
+
+    // delete
+    public void delete(String username) {
+        SQLiteDatabase sdb = dbHelper.getReadableDatabase();
+        String sql = "delete from user where username = '" + username + "'";
+        sdb.execSQL(sql);
+    }
+
+    // update
+    public void update(User user) {
+
+    }
+
+    public User query(String username) {
+        User retUser = new User();
+        Cursor cursor;
+        SQLiteDatabase sdb = dbHelper.getReadableDatabase();
+        String sql = "select * from user where username = '" + username + "'";
+        cursor = sdb.rawQuery(sql, null);
+        if (cursor.moveToFirst()) {
+            if (!TextUtils.isEmpty(cursor.getString(0))) {
+                Log.i(TAG, "pass is " + cursor.getString(2));
+                retUser.setUsername(cursor.getString(cursor.getColumnIndex(UserColumns.NAME)));
+                retUser.setPassword(cursor.getString(cursor.getColumnIndex(UserColumns.PASSWORD)));
+                retUser.setAge(cursor.getInt(cursor.getColumnIndex(UserColumns.AGE)));
+                retUser.setSex(cursor.getString(cursor.getColumnIndex(UserColumns.SEX)));
+            }
+
+        }
+        if (!cursor.isClosed()) {
+            cursor.close();
+        }
+        return retUser;
+    }
+
 }
