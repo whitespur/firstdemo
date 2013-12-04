@@ -32,6 +32,8 @@ import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.location.ad;
 import com.example.firstdemo.R;
+import com.example.firstdemo.RegisterActivity;
+import com.example.firstdemo.data.UserService;
 
 /**
  * @author jinglong.jjl
@@ -117,8 +119,11 @@ public class OrderCoach extends Activity {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "mOrderButton onClick");
+                UserService uService = new UserService(OrderCoach.this);
+                String currentUserString = uService.getCurrentUser();
+                //TODO submit order info to server
                 if (mPlacEditText.getText() != null) {
-                    Toast.makeText(OrderCoach.this, "预定成功", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(OrderCoach.this, "预定成功"+currentUserString, Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(OrderCoach.this, "预定失败，请重填信息", Toast.LENGTH_SHORT).show();
                 }

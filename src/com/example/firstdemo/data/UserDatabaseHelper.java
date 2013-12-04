@@ -9,15 +9,13 @@ import android.util.Log;
 
 public class UserDatabaseHelper extends SQLiteOpenHelper {
 
-    private static final String DATABASE_NAME = "user.db";
+    private static final String DATABASE_NAME = "car.db";
 
     private static final int DATABASE_VERSION = 1;
 
-    public static final String ADD_TIME_KEY = "add_time";
-
     public interface Tables {
-        public static final String USER = "user";
-        public static final String ORDER = "order";
+        public static final String USER = "user_table";
+        public static final String ORDER = "order_table";
     }
 
     public interface UserColumns {

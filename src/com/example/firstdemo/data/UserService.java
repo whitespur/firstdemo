@@ -4,6 +4,8 @@ package com.example.firstdemo.data;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.example.firstdemo.data.UserDatabaseHelper.OrderColumns;
+import com.example.firstdemo.data.UserDatabaseHelper.Tables;
 import com.example.firstdemo.data.UserDatabaseHelper.UserColumns;
 import com.example.firstdemo.utils.HttpConnection;
 
@@ -36,7 +38,7 @@ public class UserService {
          * true; } return false;
          */
         SQLiteDatabase sdb = dbHelper.getWritableDatabase();
-        String sql = "insert into order(user_name) values(?)";
+        String sql = "insert into "+Tables.ORDER+"(user_name) values(?)";//save curren user name to order table
         Object obj[] = {
                 username
         };
@@ -72,7 +74,7 @@ public class UserService {
     public boolean register(User user) {
         boolean ret = false;
         SQLiteDatabase sdb = dbHelper.getWritableDatabase();
-        String sql = "insert into user(username,password,age,sex) values(?,?,?,?)";
+        String sql = "insert into "+Tables.USER+"(username,password,age,sex) values(?,?,?,?)";
         Object obj[] = {
                 user.getUsername(), user.getPassword(), user.getAge(), user.getSex()
         };
@@ -113,7 +115,7 @@ public class UserService {
     // delete
     public void delete(String username) {
         SQLiteDatabase sdb = dbHelper.getReadableDatabase();
-        String sql = "delete from user where username = '" + username + "'";
+        String sql = "delete from "+Tables.USER+" where username = '" + username + "'";
         sdb.execSQL(sql);
     }
 
@@ -126,7 +128,7 @@ public class UserService {
         User retUser = new User();
         Cursor cursor;
         SQLiteDatabase sdb = dbHelper.getReadableDatabase();
-        String sql = "select * from user where username = '" + username + "'";
+        String sql = "select * from "+Tables.USER+" where username = '" + username + "'";
         cursor = sdb.rawQuery(sql, null);
         if (cursor.moveToFirst()) {
             if (!TextUtils.isEmpty(cursor.getString(0))) {
@@ -142,6 +144,21 @@ public class UserService {
             cursor.close();
         }
         return retUser;
+    }
+    
+    public String getCurrentUser(){
+        String ret=null;
+        Cursor cursor;
+        SQLiteDatabase sdb = dbHelper.getReadableDatabase();
+        String sql = "select * from "+Tables.ORDER;
+        cursor = sdb.rawQuery(sql, null);
+        if (cursor.moveToFirst()) {
+            if (!TextUtils.isEmpty(cursor.getString(0))) {
+                ret = cursor.getString(cursor.getColumnIndex(OrderColumns.USER_NAME));
+            }
+        }
+        Log.d(TAG,"getCurrentUser ret is "+ret);
+        return ret;
     }
 
 }
