@@ -10,7 +10,9 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
@@ -34,6 +36,8 @@ import com.baidu.location.ad;
 import com.example.firstdemo.R;
 import com.example.firstdemo.RegisterActivity;
 import com.example.firstdemo.data.UserService;
+import com.example.firstdemo.utils.HttpConnection;
+import com.example.firstdemo.utils.NetThread;
 
 /**
  * @author jinglong.jjl
@@ -52,6 +56,29 @@ public class OrderCoach extends Activity {
     private EditText mPlacEditText;
     public LocationClient mLocationClient = null;
     public MyLocationListenner myListener = new MyLocationListenner();
+    
+    private Handler mHandler = new Handler(){
+        public void handleMessage(android.os.Message msg) {
+            super.handleMessage(msg);
+            Log.d(TAG,"mHandler msg is "+msg.what);
+            switch (msg.what) {
+              case 0:
+                  Toast.makeText(getApplicationContext(), "Book success", Toast.LENGTH_LONG).show();
+                  //TODO goto pay activity
+                  /*Intent intent = new Intent();
+                  intent.setClass(getApplicationContext(), OrderCoach.class);
+                  startActivity(intent);
+                  finish();*/
+                  break;
+              case -1:
+                  Toast.makeText(getApplicationContext(), "Book failed", Toast.LENGTH_LONG).show();
+                  break;
+              default:
+                  Toast.makeText(getApplicationContext(), "Book failed", Toast.LENGTH_LONG).show();
+                  break;
+          }
+        };  
+      };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,13 +148,20 @@ public class OrderCoach extends Activity {
                 Log.d(TAG, "mOrderButton onClick");
                 UserService uService = new UserService(OrderCoach.this);
                 String currentUserString = uService.getCurrentUser();
+                long time = System.currentTimeMillis();
+                time = mTime.toMillis(true);
+                Log.d(TAG,"true time is "+time);
+                time = mTime.toMillis(false);
+                Log.d(TAG, "false time is "+time);
+                String urlString;
+                boolean result;
                 //TODO submit order info to server
                 if (mPlacEditText.getText() != null) {
-                    Toast.makeText(OrderCoach.this, "预定成功"+currentUserString, Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(OrderCoach.this, "预定失败，请重填信息", Toast.LENGTH_SHORT).show();
+                    urlString = HttpConnection.BaseURL + "/book?user="+currentUserString+"&time="+time+"&place="+mPlacEditText.getText();
+                    Log.d(TAG,"url is "+urlString);
+                    result=uService.Book(currentUserString,time,mPlace);
+                    new NetThread(mHandler, urlString).start();
                 }
-
             }
         });
 

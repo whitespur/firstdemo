@@ -21,6 +21,7 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
     public interface UserColumns {
         public static final String NAME = "username";
         public static final String PASSWORD = "password";
+        public static final String PHONE = "phone";
         public static final String AGE = "age";
         public static final String SEX = "sex";
         public static final String EMAIL = "email";
@@ -44,7 +45,7 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
         Log.d("UserDatabaseHelper", "onCreate+++++++++++");
         // create user table
         db.execSQL("CREATE TABLE " + Tables.USER + " ( 'Id' INTEGER PRIMARY KEY AUTOINCREMENT, " + UserColumns.NAME + " TEXT," + UserColumns.PASSWORD
-                + " TEXT," + UserColumns.AGE + " INTEGER," + UserColumns.SEX + " TEXT," + UserColumns.EMAIL + " TEXT" + ");");
+                + " TEXT,"+UserColumns.PHONE + " TEXT," + UserColumns.AGE + " INTEGER," + UserColumns.SEX + " TEXT," + UserColumns.EMAIL + " TEXT" + ");");
         /*
          * String sql=
          * "create table user(id integer primary key autoincrement,username varchar(20),password varchar(20),age integer,sex varchar(2))"
@@ -52,7 +53,7 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
          */
         // TODO create order table
         db.execSQL("CREATE TABLE "+ Tables.ORDER+" ( 'Id' INTEGER PRIMARY KEY AUTOINCREMENT, " + OrderColumns.ORDER_NUM+" INTEGER,"
-                +OrderColumns.USER_NAME+" TEXT,"+OrderColumns.ORDER_TIME+" FLOAT,"+OrderColumns.ORDER_PALCE+" TEXT,"
+                +OrderColumns.USER_NAME+" TEXT,"+OrderColumns.ORDER_TIME+" LONG,"+OrderColumns.ORDER_PALCE+" TEXT,"
                 +OrderColumns.PRICE+" FLOAT,"+OrderColumns.ORDER_STATUS+" INTEGER"+");");
 
     }

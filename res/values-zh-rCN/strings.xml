@@ -9,6 +9,7 @@
     <string name="welcome_register">欢迎注册</string>
     <string name="username">用户名</string>
     <string name="password">密码</string>
+    <string name="phone_num">手机号</string>
     <string name="age">年龄</string>
     <string name="sex">性别</string>
     <string name="male">Male</string>
@@ -16,6 +17,7 @@
     
     <string name ="hint_username">请输入用户名！</string>
     <string name ="hint_password">请输入密码！</string>
+    <string name ="hint_phone">请输入手机号！</string>
     <string name ="hint_age">请输入年龄！</string>
     
     <string name="time">时间</string>

@@ -4,6 +4,7 @@ package com.example.firstdemo;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -14,13 +15,37 @@ import android.widget.Toast;
 import com.example.firstdemo.data.User;
 import com.example.firstdemo.data.UserService;
 import com.example.firstdemo.order.OrderCoach;
+import com.example.firstdemo.utils.HttpConnection;
+import com.example.firstdemo.utils.NetThread;
 
 public class LoginActivity extends Activity {
     EditText username;
     EditText password;
     Button login, register;
     boolean result;
+    private String url;
     private static final String TAG = "LoginActivity";
+    private Handler mHandler = new Handler(){
+        public void handleMessage(android.os.Message msg) {
+            super.handleMessage(msg);
+            Log.d(TAG,"mHandler msg is "+msg.what);
+            switch (msg.what) {
+              case 0:
+                  Toast.makeText(getApplicationContext(), "Login success", Toast.LENGTH_LONG).show();
+                  Intent intent = new Intent();
+                  intent.setClass(getApplicationContext(), OrderCoach.class);
+                  startActivity(intent);
+                  finish();
+                  break;
+              case -1:
+                  Toast.makeText(getApplicationContext(), "Login failed", Toast.LENGTH_LONG).show();
+                  break;
+              default:
+                  Toast.makeText(getApplicationContext(), "Login failed", Toast.LENGTH_LONG).show();
+                  break;
+          }
+        };  
+      };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,18 +67,10 @@ public class LoginActivity extends Activity {
                 UserService uService = new UserService(LoginActivity.this);
                 //User retUser = uService.query(name);
                 result = uService.login(name, pass);
+                url = HttpConnection.BaseURL+ "/login?username="+name+"&passwd="+pass;
+                Log.d(TAG,"url is "+url);
+                new NetThread(mHandler, url).start();
                 Log.d(TAG,"login resutl is "+result);
-                if (result) {
-                    //if (pass.equals(retUser.getPassword())) {//local database
-                    Log.i(TAG, "pass is" + pass);
-                    Intent intent = new Intent();
-                    intent.setClass(LoginActivity.this, OrderCoach.class);
-                    startActivity(intent);
-                    Toast.makeText(LoginActivity.this, "login success", Toast.LENGTH_LONG).show();
-                } else {
-                    Log.i(TAG, "Login failed" + "pass is " + pass);
-                    Toast.makeText(LoginActivity.this, "login failed", Toast.LENGTH_LONG).show();
-                }
 
             }
         });
@@ -64,5 +81,6 @@ public class LoginActivity extends Activity {
             }
         });
     }
+
 
 }

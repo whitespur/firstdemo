@@ -17,10 +17,10 @@ import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
 
+
 public class UserService {
     private UserDatabaseHelper dbHelper;
     private static final String TAG = "UserService";
-    private String urlString;
     private String retString;
     private int code = 0;
 
@@ -46,22 +46,6 @@ public class UserService {
         sdb.close();
         
         code = 0;
-        if(!TextUtils.isEmpty(username)&&!TextUtils.isEmpty(password)){
-            urlString = HttpConnection.BaseURL + "/login?username="+username+"&passwd="+password;
-            Log.d(TAG,"login url is "+urlString);
-            new Thread() {
-                public void run() {
-                    HttpConnection mHttpConnection = new HttpConnection();
-                    retString = mHttpConnection.getURL(urlString);
-                    try {
-                        JSONObject result = new JSONObject(retString);
-                        code = result.getInt("code");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }.start();
-        }
         Log.d(TAG,"login retString is " + retString + " code is " + code);
         if(code == 0){
             return true;
@@ -74,30 +58,17 @@ public class UserService {
     public boolean register(User user) {
         boolean ret = false;
         SQLiteDatabase sdb = dbHelper.getWritableDatabase();
-        String sql = "insert into "+Tables.USER+"(username,password,age,sex) values(?,?,?,?)";
+        String sql = "insert into "+Tables.USER+"(username,password,phone,age,sex) values(?,?,?,?,?)";
         Object obj[] = {
-                user.getUsername(), user.getPassword(), user.getAge(), user.getSex()
+                user.getUsername(), user.getPassword(),user.getPhone(), user.getAge(), user.getSex()
         };
         sdb.execSQL(sql, obj);
+        sql = "insert into "+Tables.ORDER+"(user_name) values(?)";//save curren user name to order table
+        Object obj1[] = {
+                user.getUsername()
+        };
+        sdb.execSQL(sql, obj1);
         sdb.close();
-        // TODO: register info to server need in a thread user handler to get
-        // result
-
-        urlString = HttpConnection.BaseURL + "/init?username=" + user.getUsername() + "&passwd=" + user.getPassword() + "&age=" + user.getAge() + "&sex="
-                + user.getSex();
-        Log.d(TAG, "register url is " + urlString);
-        new Thread() {
-            public void run() {
-                HttpConnection mHttpConnection = new HttpConnection();
-                retString = mHttpConnection.getURL(urlString);
-                try {
-                    JSONObject result = new JSONObject(retString);
-                    code = result.getInt("code");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }.start();
 
         Log.d(TAG, "register retString is " + retString + " code is " + code);
         if (code == 0) {
@@ -105,6 +76,22 @@ public class UserService {
         } else {
             return false;
         }
+    }
+    public boolean Book(String user,long time,String place){//TODO save order info to database
+        code = 0;
+        SQLiteDatabase sdb = dbHelper.getWritableDatabase();
+        String sql = "insert into "+Tables.ORDER+"(user_name,order_time,order_place) values(?,?,?)";
+        Object obj[] = {
+                user,time,place
+        };
+        sdb.execSQL(sql, obj);
+        sdb.close();
+        if(code == 0){
+            return true;
+        }else{
+            return false;
+        }
+        
     }
 
     // insert same as register
