@@ -65,7 +65,6 @@ public class LoginActivity extends Activity {
                 String pass = password.getText().toString();
                 Log.i(TAG, "login input"+name + "_" + pass);
                 UserService uService = new UserService(LoginActivity.this);
-                //User retUser = uService.query(name);
                 result = uService.login(name, pass);
                 url = HttpConnection.BaseURL+ "/login?username="+name+"&passwd="+pass;
                 Log.d(TAG,"url is "+url);

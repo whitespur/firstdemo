@@ -88,6 +88,7 @@ public class RegisterActivity extends Activity {
                             Toast.makeText(RegisterActivity.this, "no network,please connect your network first", Toast.LENGTH_LONG).show();
                         } else {
                             result = uService.register(user);
+                            uService.login(name, pass);
                             url = HttpConnection.BaseURL + "/init?username=" +name + "&passwd=" + pass+ "&phone="+phonestr+"&age=" +agestr+ "&sex="
                                     + sexstr;
                             Log.d(TAG,"url is "+url);

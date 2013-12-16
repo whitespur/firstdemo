@@ -38,11 +38,29 @@ public class UserService {
          * true; } return false;
          */
         SQLiteDatabase sdb = dbHelper.getWritableDatabase();
-        String sql = "insert into "+Tables.ORDER+"(user_name) values(?)";//save curren user name to order table
+        String sql = "select * from "+Tables.ORDER;
+        Cursor cursor = sdb.rawQuery(sql, null);
+        if(null!=cursor && cursor.moveToFirst()){
+            if (!TextUtils.isEmpty(cursor.getString(cursor.getColumnIndex(OrderColumns.USER_NAME)))) {
+                //update curren user in order_table
+                sql = "update "+Tables.ORDER+" set "+OrderColumns.USER_NAME+" = ? "+" where Id = 1";
+                Object obj[] = {
+                        username
+                };
+                sdb.execSQL(sql,obj);
+            }
+        }else{
+            sql = "insert into "+Tables.ORDER+"(user_name) values(?)";//save curren user name to order table
+            Object obj[] = {
+                    username
+            };
+            sdb.execSQL(sql, obj);
+        }
+       /* sql = "insert into "+Tables.ORDER+"(user_name) values(?)";//save curren user name to order table
         Object obj[] = {
                 username
         };
-        sdb.execSQL(sql, obj);
+        sdb.execSQL(sql, obj);*/
         sdb.close();
         
         code = 0;
